@@ -78,44 +78,9 @@ I sorted the input to document the problem
 proc sort data=have out=havSrt;                                                                   
 by robot time;                                                                                    
 run;quit;                                                                                         
+                                                                                                                                                                
                                                                                                   
-data want;                                                                                        
-                                                                                                  
-  retain robot dur 0 durPct;                                                                      
-                                                                                                  
-  * compute total duration;                                                                       
-  set have(obs=1 keep=time) nobs=obs;                                                             
-  set have(keep=time rename=time=endtym) point=obs;                                               
-  durTot=endtym-time;                                                                             
-                                                                                                  
-  do until (dne);                                                                                 
-     set havSrt end=dne;                                                                          
-     by robot;                                                                                    
-     lagTym=lag(time);                                                                            
-     if first.robot then begTym=time;                                                             
-     if lag(Active)=0 and (active=1) then dur=dur + (time-lagTym);                                
-     if last.robot then do;                                                                       
-        durPct=coalesce(divide(dur,(time-begTym)),0);                                             
-        output;                                                                                   
-        dur=0;                                                                                    
-     end;                                                                                         
-  end;                                                                                            
-  drop endtym lagtym active durtot time begTym;                                                   
-                                                                                                  
-run;quit;                                                                                         
-                                                                                                  
-/*                                                                                                
- WORK.WANT total obs=6                                                                            
-                                                                                                  
-  ROBOT    DUR     DURPCT                                                                         
-                                                                                                  
-    22       0    0.00000                                                                         
-    51       0    0.00000                                                                         
-    64       0    0.00000                                                                         
-    74       0    0.00000                                                                         
-    76       0    0.00000                                                                         
-    80      19    0.67857                                                                         
-*/                                                                                                
+                                                                                  
                                                                                                   
 data want;                                                                                        
                                                                                                   
@@ -132,7 +97,21 @@ data want;
   drop endtym lagtym active durtot time;                                                          
                                                                                                   
 run;quit;                                                                                         
+        
+/*                                                                                                
+ WORK.WANT total obs=6                                                                            
                                                                                                   
+  ROBOT    DUR     DURPCT                                                                         
+                                                                                                  
+    22       0    0.00000                                                                         
+    51       0    0.00000                                                                         
+    64       0    0.00000                                                                         
+    74       0    0.00000                                                                         
+    76       0    0.00000                                                                         
+    80      19    0.67857                                                                         
+*/                      
+        
+        
 *____                                                                                             
 |  _ \                                                                                            
 | |_) |                                                                                           
